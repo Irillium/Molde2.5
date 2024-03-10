@@ -10,7 +10,6 @@ repositories {
 }
 
 dependencies {
-    //la cosa mas IMPORTANTEEEEE
     implementation ("com.google.code.gson:gson:2.10.1")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
