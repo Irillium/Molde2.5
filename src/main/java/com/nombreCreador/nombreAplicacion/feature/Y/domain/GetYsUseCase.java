@@ -1,5 +1,7 @@
 package com.nombreCreador.nombreAplicacion.feature.Y.domain;
 
+import java.util.ArrayList;
+
 public class GetYsUseCase {
     YRepository yRepository;
 
@@ -7,7 +9,8 @@ public class GetYsUseCase {
         this.yRepository = yRepository;
     }
 
-    public void execute(){
-        yRepository.obtain();
+    public ArrayList<Y> execute(){
+
+        return yRepository.obtainAll();
     }
 }

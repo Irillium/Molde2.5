@@ -20,13 +20,13 @@ public class YDataRepository implements YRepository {
     }
 
     @Override
-    public ArrayList<Y> obtain() {
-        ArrayList<Y> ys=new ArrayList<>();
-        Y y = fileLocalDataSourceY.obtain();
-        if (y!=null){
-            ys.add(y);
-        }
-        return ys;
+    public Y obtainOne(String id) {
+        return  fileLocalDataSourceY.findById(id);
+    }
+
+    @Override
+    public ArrayList<Y> obtainAll() {
+        return  (ArrayList<Y>) fileLocalDataSourceY.findAll();
     }
 
     @Override

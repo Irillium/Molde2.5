@@ -10,6 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class FileLocalDataSourceY {
@@ -17,52 +20,74 @@ public class FileLocalDataSourceY {
 
     private Gson gson = new Gson();
 
-    private final Type type = new TypeToken<Y>() {
+    private final Type typeList = new TypeToken<ArrayList<Y>>() {
     }.getType();
 
-    public void save(Y y) {
+    public void save(Y model) {
+        List<Y> models = findAll();
+        models.add(model);
+        saveToFile(models);
+    }
+
+    public void saveList(List<Y> models) {
+        saveToFile(models);
+    }
+
+    private void saveToFile(List<Y> models) {
         try {
             FileWriter myWriter = new FileWriter(nameFile);
-            myWriter.write(gson.toJson(y));
+            myWriter.write(gson.toJson(models));
             myWriter.close();
             System.out.println("Datos guardados correctamente");
         } catch (IOException e) {
             System.out.println("Ha ocurrido un error al guardar la información.");
+            e.printStackTrace();
         }
     }
 
-    public Y obtain() {
+
+    public Y findById(String id) {
+        List<Y> models = findAll();
+        for (Y model : models) {
+            if (Objects.equals(model.getId(), id)) {
+                return model;
+            }
+        }
+        return null;
+    }
+
+    public List<Y> findAll() {
         try {
             File myObj = new File(nameFile);
             if (!myObj.exists()) {
                 myObj.createNewFile();
             }
             Scanner myReader = new Scanner(myObj);
-            if (myReader.hasNextLine()) {
+            while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 myReader.close();
-                return gson.fromJson(data, type);
+                return gson.fromJson(data, typeList);
             }
             myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Ha ocurrido un error al obtener el listado.");
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Ha ocurrido un error al crear el fichero.");
             throw new RuntimeException(e);
         }
-        return null;
+        return new ArrayList<>();
     }
 
-    public void clear() {
-        try {
-            FileWriter myWriter = new FileWriter(nameFile);
-            myWriter.write("");
-            myWriter.close();
-            System.out.println("Datos guardados correctamente");
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error al guardar la información.");
+    public void delete(String modelId) {
+        List<Y> newList = new ArrayList<>();
+        List<Y> models = findAll();
+        for (Y model : models) {
+            if (!model.getId().equals(modelId)) {
+                newList.add(model);
+            }
         }
+        saveList(newList);
     }
 
 }
